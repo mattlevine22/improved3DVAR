@@ -32,7 +32,7 @@ function x = GDfullstates(m0, true_traj, obs_traj, dt, K0, learning_rate, Psi, l
 	L = zeros(N,1);
 
 	state_pred_now = psi(m0, dt);
-	K = K0;
+	K = K0; % needs a comment
 	for j=1:N
 		meas_now = obs_traj[j,:];
 		% need to compute this partial derivative!!!
