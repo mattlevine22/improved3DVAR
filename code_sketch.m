@@ -1,7 +1,4 @@
 % 1 file per Psi
-
-e.g.
-
 function v1 = L63(v0, dt)
 end
 
@@ -22,11 +19,11 @@ function [m_assim, m_pred] = Full3DVAR(m0, K, Psi, obs_traj, H, dt)
 	m_assim = zeros(N,d);
 	m_pred = zeros(N,d);
 
-	m_pred[1,:] = Psi(m0, dt);
+	m_pred(1,:) = Psi(m0, dt);
 	for j=1:N
-		m_assim[j,:] = ThreeDvar_step(m_pred[j,:], obs_traj[j,:], K, H)
+		m_assim(j,:) = ThreeDvar_step(m_pred(j,:), obs_traj(j,:), K, H)
 		if j<N
-			m_pred[j+1,:] = psi(m_assim[j,:], dt);
+			m_pred(j+1,:) = psi(m_assim(j,:), dt);
 		end
 	end
 end
