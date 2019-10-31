@@ -10,6 +10,8 @@ t0 = 0;
 tf = 10;
 [true_trajectory, observed_trajectory, time] = generateData(@PsiL63, H, noise_params, dt, t0, tf, v0);
 
-plot3(time, true_trajectory(1,:), true_trajectory(2,:),'r')
-hold on;
-plot3(time, observed_trajectory(1,:), zeros(length(observed_trajectory(1,:))) , 'b')
+figure(1)
+plot3(true_trajectory(1,:), true_trajectory(2,:),true_trajectory(3,:),'r')
+
+figure(2)
+plot(time, observed_trajectory, 'b')
