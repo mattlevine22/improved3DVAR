@@ -25,7 +25,7 @@ observed_trajectory(:,1) = H*true_trajectory(:,1) + random('Normal',mu,sigma, n,
 
 %fill whole trajectories
 for i=2:length(time)
-    true_trajectory(:,i) = Psi(true_trajectory(i-1), dt);
+    true_trajectory(:,i) = Psi(true_trajectory(:,i-1), dt);
     observed_trajectory(:,i) = (H*true_trajectory(:,i)) + random('Normal',mu,sigma, n, 1);
 end
 
