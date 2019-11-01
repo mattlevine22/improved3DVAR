@@ -8,7 +8,7 @@ end
 
 %unpack noise params
 mu = noise_params.mean;
-sigma = noise_params.sigma;
+sigma = noise_params.variance;
 
 %get dimensions of data and observations
 d = size(H,2);
