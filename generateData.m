@@ -7,8 +7,8 @@ if(nargin <= 6) % default
 end
 
 %unpack noise params
-mu = noise_params(1);
-sigma = noise_params(2);
+mu = noise_params.mean;
+sigma = noise_params.sigma;
 
 %get dimensions of data and observations
 d = size(H,2);
