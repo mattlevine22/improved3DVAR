@@ -4,7 +4,7 @@ t0 = 0;
 tf = 10;
 example_metric = zeros(N_tests,1);
 errorOnTrajectory = zeros(length(t0:dt:tf),size(H,2),N_tests);
-
+evaluateK = zeros(N_tests,1);
 for k=1:N_tests
     % get v0 IC for Psi
     v0 = sample_inits();
@@ -18,15 +18,19 @@ for k=1:N_tests
     % compare assim vs TRUE
     errorOnTrajectory(:,:,k) = (m_assim - true_trajectory').^2;
     example_metric(k) = mean(mean((m_assim - true_trajectory').^2));
+    evaluateK(k) = evalK(Kopt, m0, observed_trajectory, dt,Psi, H);
 end
 
 errorOnTrajectoryMean = mean(errorOnTrajectory, 3);
 errorOnTrajectoryStd = std(errorOnTrajectory, 0, 3);
 % Make Plots
-figure;
-plot(1:N_tests, example_metric, 'xr');
-xlabel('# Test')
-ylabel('Mean Squared Error')
+%figure;
+%plot(1:N_tests, example_metric, 'xr');
+%xlabel('# Test')
+%ylabel('Mean Squared Error')
+Kopt
+example_metric
+evaluateK
 
 figure;
 M = length(m0);
@@ -34,7 +38,7 @@ N = length(true_trajectory);
 for i=1:M
     subplot(M,1,i)
     plot(dt*(1:N),m_assim(:,i)); hold on;
-    plot(dt*(1:N),true_trajectory(i,:));
+    plot(dt*(1:N),true_trajectory(i,:),'--');
 end
 
 figure;
