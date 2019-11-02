@@ -1,5 +1,5 @@
 function validate(Kopt, N_tests, Psi, dt, H, noise_params, sample_inits)
-close all;
+
 t0 = 0;
 tf = 10;
 example_metric = zeros(N_tests,1);
@@ -39,7 +39,7 @@ end
 
 figure;
 n = size(H,2);
-N = size(errorOnTrajectoryMean,1);
+N = length(errorOnTrajectoryMean);
 sigma = sqrt(noise_params.variance);
 for i=1:n
     subplot(n,1,i)
