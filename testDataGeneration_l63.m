@@ -12,11 +12,11 @@ t0 = 0;
 tf = 5;
 [true_trajectory, observed_trajectory, time] = generateData(@PsiL63, H, noise_params, dt, t0, tf, v0);
 
-%figure;
-%plot3(true_trajectory(1,:), true_trajectory(2,:),true_trajectory(3,:),'r')
+figure(3);
+plot3(true_trajectory(1,:), true_trajectory(2,:),true_trajectory(3,:),'r')
 
-%figure;
-%plot(time, observed_trajectory, 'b')
+figure(4);
+plot(time, observed_trajectory, 'b')
 
 sizes = size(H);
 K0 = [0.08, 0.12 ,0.003]';%0.1*randn(sizes(2),sizes(1));

@@ -1,5 +1,11 @@
 function validate(Kopt, N_tests, Psi, dt, H, noise_params, sample_inits)
-close all;
+
+%how fast below measurement noise
+%asymptotic running average
+%predicting the observed state
+%error in predicting the full state
+%how long can we predict in the future up to a specific error
+
 t0 = 0;
 tf = 10;
 example_metric = zeros(N_tests,1);
