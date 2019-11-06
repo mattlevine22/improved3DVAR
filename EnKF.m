@@ -15,36 +15,49 @@ S = zeros(n,n);
 K = zeros(d,n);
 y = zeros(N,n, number_Particles);
 est_traj = zeros(d,N);
+C = zeros(N,1);
+K_list = zeros(N,d,n);
+
 
 %get first set of particles from given start state
 v(1,:,:) = v0 + random('Normal',mu,Gamma, 1, d, number_Particles);
 
 
-for j=1:N
+for j=1:N-1
     %prediction
     for p = 1:number_Particles %particle wise:
-        v_hat(j,:,p) = Psi(v(j,:,p),dt) + random('Normal',mu,Gamma, d, 1);
+        v_hat(j+1,:,p) = Psi(v(j,:,p),dt) + random('Normal',mu,Gamma, d, 1);
     end
     
-    m_hat(j,:) = 1/number_Particles * sum(v_hat(j,:,:),3); %check sum
-    
+    m_hat(j+1,:) = 1/number_Particles * sum(v_hat(j+1,:,:),3); %check sum
+    C_hat = zeros(d,d);
     for p = 1:number_Particles  %particle wise:
-        helper = (v_hat(j,:,p)-m_hat(p,:));
-        C_hat = C_hat + sum(helper*helper'); %outer product, check sum
+        helper = -(v_hat(j+1,:,p)-m_hat(j+1,:))';
+        C_hat = C_hat + helper*helper'; %outer product, check sum
     end
     C_hat = C_hat/number_Particles;
-    
+    C(j) = norm(C_hat);
     %analysis
     S = H * C_hat * H' + Gamma; %index j+1
-    K = C_hat * H' * inv(S); %index j+1
-    y(j,:,:) = obs_traj(:,j) + random('Normal',mu,Gamma,1, n, number_Particles);%s??
+    K = C_hat * H' / S; %index j+1
+    %K_list(j,:) = K; %isnt that a learned K as well?
+    y(j+1,:,:) = obs_traj(:,j+1)' + random('Normal',mu,Gamma,1, n, number_Particles);%s??
     for p = 1:number_Particles
-        v(j,:,p) = (eye(d) - K*H)*v_hat(j,:,p)' + K * y(j,:,p);
+        v(j+1,:,p) = ((eye(d) - K*H)*v_hat(j+1,:,p)' + K * y(j+1,:,p)')';
     end
 end
 
 
 %generate estimated trajectory (expected value of final particles)
 est_traj = sum(v,3)'/number_Particles;
+%figure(5);
+%plot(1:N, C)
+
+%figure(7);
+%for i=1:length(K')
+%    subplot(3,1,i)
+%    plot(dt*(1:N),K_list(:,i));hold on;
+%end
+%legend('K_x','K_y','K_z')
 
 end

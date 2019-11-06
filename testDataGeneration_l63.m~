@@ -3,14 +3,14 @@ clear all;
 close all;
 
 %init parameter and generate trajectories
-H = [1 0 0];
-dt = 0.001;
+H = eye(3);%[1 0 0];
 noise_params = struct();
 noise_params.mean = 0;
-noise_params.variance = 1;
+noise_params.variance = 0.1;
+dt = 0.1;
 v0 = get_lorenz_inits();
 t0 = 0;
-tf = 25;
+tf = 10;
 [true_trajectory, observed_trajectory, time] = generateData(@PsiL63, H, noise_params, dt, t0, tf, v0);
 
 %example use of EnKF
@@ -18,7 +18,6 @@ noise_params_EnKF = noise_params;
 number_Particles = 50; %how many?
 v0 = get_lorenz_inits();
 est_traj = EnKF(v0, observed_trajectory, dt, noise_params_EnKF, number_Particles, @PsiL63, H);
-%true_trajectory = est_traj;
 
 %visualization of EnKF
 N=length(observed_trajectory);
@@ -26,7 +25,7 @@ figure(8)
 for i=1:3
     subplot(3,1,i)
     plot(dt*(1:N),true_trajectory(i,:),'-b'); hold on;
-    plot(dt*(1:N),est_traj(i,:),'--');
+    plot(dt*(1:N),est_traj(i,:),'-');
     legend('true', 'est')
 end
 
@@ -37,7 +36,7 @@ end
 %plot(time, observed_trajectory, 'b')
 
 sizes = size(H);
-K0 = 0.1*randn(sizes(2),sizes(1));%[0.08, 0.12 ,0.003]';
+K0 = [0.08, 0.12 ,0.003]';%0.1*randn(sizes(2),sizes(1));
 %for OptObservations the starting point is crucial, better start with known to be good value
 learning_rate = 0.0005;
 m0 = get_lorenz_inits();
