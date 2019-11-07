@@ -10,12 +10,12 @@ zmax = 40;
 if nargin < 1
     n = 1;
 end
-init_vec = zeros(n, 3);
+init_vec = zeros(3, n);
 for k=1:n
     xrand = xmin+(xmax-xmin)*rand;
     yrand = ymin+(ymax-ymin)*rand;
     zrand = zmin+(zmax-zmin)*rand;
-    init_vec(k,:) = [xrand, yrand, zrand];
+    init_vec(:,k) = [xrand, yrand, zrand];
 end
 
 end
