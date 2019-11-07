@@ -1,7 +1,10 @@
-function est_traj = EnKF(v0, obs_traj, dt, noise_params, number_Particles, Psi, H) %v0 one start value
+function est_traj = EnKF(v0, obs_traj, dt, noise_params, number_Particles, Psi, H, drivers) %v0 one start value
 %unpack noise params
-mu = noise_params.mean;
-Gamma = noise_params.variance;
+muObs = noise_params.obs_noise.mean;
+Gamma = noise_params.obs_noise.covariance;
+muState = noise_params.state_noise.mean;
+Sigma = noise_params.state_noise.covariance;
+
 
 %initialization
 n = size(H,1); %dim of observations
@@ -20,15 +23,15 @@ K_list = zeros(N,d,n);
 
 
 %get first set of particles from given start state
-v(1,:,:) = v0 + random('Normal',mu,Gamma, 1, d, number_Particles);
+v(1,:,:) = v0 + mvnrnd(muState, Sigma, number_Particles)';
 
 
 for j=1:N-1
     %prediction
     for p = 1:number_Particles %particle wise:
-        v_hat(j+1,:,p) = Psi(v(j,:,p),dt) + random('Normal',mu,Gamma, d, 1);
+        v_hat(j+1,:,p) = Psi(v(j,:,p),dt,drivers) + mvnrnd(muState,Sigma)';
     end
-    
+
     m_hat(j+1,:) = 1/number_Particles * sum(v_hat(j+1,:,:),3); %check sum
     C_hat = zeros(d,d);
     for p = 1:number_Particles  %particle wise:
@@ -41,7 +44,8 @@ for j=1:N-1
     S = H * C_hat * H' + Gamma; %index j+1
     K = C_hat * H' / S; %index j+1
     %K_list(j,:) = K; %isnt that a learned K as well?
-    y(j+1,:,:) = obs_traj(:,j+1)' + random('Normal',mu,Gamma,1, n, number_Particles);%s??
+%     y(j+1,:,:) = obs_traj(:,j+1)' + random('Normal',mu,Gamma,1, n, number_Particles);%s??
+    y(j+1,:,:) = obs_traj(:,j+1)' + mvnrnd(muObs, Gamma, number_Particles);%is this right??
     for p = 1:number_Particles
         v(j+1,:,p) = ((eye(d) - K*H)*v_hat(j+1,:,p)' + K * y(j+1,:,p)')';
     end
