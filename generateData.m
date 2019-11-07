@@ -1,5 +1,5 @@
 %for data generation
-function [true_trajectory, observed_trajectory, time] = generateData(Psi, H, noise_params, dt, t0, tf, v0)
+function [true_trajectory, observed_trajectory, time, drivers] = generateData(Psi, H, noise_params, dt, t0, tf, v0, is_driven)
 
 % check if v0 is parameter or default
 if(nargin <= 6) % default
@@ -7,26 +7,45 @@ if(nargin <= 6) % default
 end
 
 %unpack noise params
-mu = noise_params.mean;
-sigma = noise_params.variance;
+muObs = noise_params.obs_noise.mean;
+Gamma = noise_params.obs_noise.covariance;
+muState = noise_params.state_noise.mean;
+Sigma = noise_params.state_noise.covariance;
 
 %get dimensions of data and observations
 d = size(H,2);
 n = size(H,1);
 
-%init time and trajectories 
+%init time and trajectories
 time = t0:dt:tf;
 true_trajectory = zeros(d, length(time));
 observed_trajectory = zeros(n, length(time));
 
+%simulate nutrition driver
+drivers = zeros(1,2);
+if is_driven
+    t_now = 0;
+    tUB = 10*60;
+    tLB = 6*60;
+    carbUB = 100000;
+    carbLB = 5000;
+    d_counter = 0;
+    while t_now < tf
+        d_counter = d_counter + 1;
+        t_now = t_now + (tLB + (tUB - tLB)*rand);
+        carb_now = carbLB + (carbUB - carbLB)*rand;
+        drivers(d_counter,:) = [t_now, carb_now];
+    end
+end
+
 %fill first value of trajectories
-true_trajectory(:,1) = Psi(v0, dt);
-observed_trajectory(:,1) = H*true_trajectory(:,1) + random('Normal',mu,sigma, n, 1);
+true_trajectory(:,1) = Psi(v0, dt, drivers) + mvnrnd(muState, Sigma);
+observed_trajectory(:,1) = H*true_trajectory(:,1) + mvnrnd(muObs, Gamma);
 
 %fill whole trajectories
 for i=2:length(time)
-    true_trajectory(:,i) = Psi(true_trajectory(:,i-1), dt);
-    observed_trajectory(:,i) = (H*true_trajectory(:,i)) + random('Normal',mu,sigma, n, 1);
+    true_trajectory(:,i) = Psi(true_trajectory(:,i-1), dt, drivers) + mvnrnd(muState, Sigma);
+    observed_trajectory(:,i) = (H*true_trajectory(:,i)) + mvnrnd(muObs, Gamma);
 end
 
 end
