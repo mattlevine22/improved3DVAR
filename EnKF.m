@@ -1,4 +1,5 @@
 function [est_traj,Kavg] = EnKF(v0, obs_traj, dt, noise_params, number_Particles, Psi, H, drivers) %v0 one start value
+tic
 %unpack noise params
 muObs = noise_params.obs_noise.mean;
 Gamma = noise_params.obs_noise.covariance;
@@ -53,17 +54,11 @@ for j=1:N-1
     end
 end
 
+%average last 20% of Ks
 Kavg = Kavg/(floor(0.2*(N-1)));
 %generate estimated trajectory (expected value of final particles)
 est_traj = sum(v,3)'/number_Particles;
-%figure(5);
-%plot(1:N, C)
 
-%figure(7);
-%for i=1:length(K')
-%    subplot(3,1,i)
-%    plot(dt*(1:N),K_list(:,i));hold on;
-%end
-%legend('K_x','K_y','K_z')
-
+disp('For EnKF: ')
+toc
 end

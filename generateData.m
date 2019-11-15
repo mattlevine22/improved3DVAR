@@ -1,6 +1,6 @@
 %for data generation
 function [true_trajectory, observed_trajectory, time, drivers] = generateData(Psi, H, noise_params, dt, t0, tf, v0, is_driven)
-
+tic
 % check if v0 is parameter or default
 if(nargin <= 6) % default
     v0 = rand();
@@ -47,5 +47,6 @@ for i=2:length(time)
     true_trajectory(:,i) = Psi(true_trajectory(:,i-1), dt, drivers) + mvnrnd(muState, Sigma);
     observed_trajectory(:,i) = (H*true_trajectory(:,i)) + mvnrnd(muObs, Gamma);
 end
-
+disp('for data generation: ')
+toc
 end

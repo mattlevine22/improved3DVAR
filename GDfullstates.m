@@ -1,5 +1,5 @@
 function Kopt = GDfullstates(m0, true_traj, obs_traj, dt, K0, learning_rate, Psi, H, drivers)
-
+tic
 N = size(true_traj,2);
 d = length(m0);
 m_assim = zeros(N,d);
@@ -30,6 +30,7 @@ end
 
 Kopt = K;
 
+if(0)
 figure;
 subplot(2,1,1)
 plot(L);
@@ -40,6 +41,8 @@ for i=1:length(K)
     leg_names{i} = sprintf('K_%.0f',i);
 end
 legend(leg_names)
-
+end
+disp('For Gradient Descent: ')
+toc
 end
 
