@@ -12,7 +12,7 @@ noise_params.state_noise.covariance = 0;
 noise_params.obs_noise.mean = 0;
 noise_params.obs_noise.covariance = 1;
 
-v0 = get_lorenz_inits();
+v0 = get_lorenz_inits()
 t0 = 0;
 tf = 5;
 [true_trajectory, observed_trajectory, time, drivers] = generateData(@PsiL63, H, noise_params, dt, t0, tf, v0, is_driven);
@@ -22,9 +22,8 @@ noise_params_EnKF = noise_params;
 noise_params_EnKF.state_noise.mean = zeros(length(H),1);
 noise_params_EnKF.state_noise.covariance = eye(length(H));
 number_Particles = 50; %how many?
-v0 = get_lorenz_inits();
-est_traj = EnKF(v0, observed_trajectory, dt, noise_params_EnKF, number_Particles, @PsiL63, H, drivers);
-%true_trajectory = est_traj;
+v0 = get_lorenz_inits()
+[est_traj,Kenkf] = EnKF(v0, observed_trajectory, dt, noise_params_EnKF, number_Particles, @PsiL63, H, drivers);
 
 %visualization of EnKF
 N=length(observed_trajectory);
@@ -35,6 +34,9 @@ for i=1:3
     plot(dt*(1:N),est_traj(i,:),'--');
     legend('true', 'est')
 end
+subplot(3,1,1)
+plot(dt*(1:N),observed_trajectory(i,:),'-g')
+true_trajectory = est_traj;
 
 %figure(3);
 %plot3(true_trajectory(1,:), true_trajectory(2,:),true_trajectory(3,:),'r')
@@ -49,10 +51,11 @@ K0 = 0.1*randn(sizes(2),sizes(1));
 learning_rate = 0.0005;
 m0 = get_lorenz_inits();
 Kopt = GDfullstates(m0, true_trajectory, observed_trajectory, dt, K0, learning_rate, @PsiL63, H, drivers);
+%Kopt = [0.08, 0.12 ,0.003]';
 % Kopt = OptObservations(m0, observed_trajectory, dt, K0, @PsiL63, H, drivers);
 
 %validate Kopt on N_tests unseen trajectories
-N_tests = 2;
+N_tests = 10;
 t0_test = t0;
 tf_test = tf;
-validate(Kopt, N_tests, @PsiL63, dt, t0_test, tf_test, H, noise_params, @get_lorenz_inits, is_driven)
+validate_new(1,Kopt, N_tests, @PsiL63, dt, t0_test, tf, tf_test, H, noise_params, @get_lorenz_inits, is_driven)
