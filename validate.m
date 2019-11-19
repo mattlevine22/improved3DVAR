@@ -17,12 +17,12 @@ for k=1:N_tests
 
     % get m0 IC for 3DVAR
     m0 = sample_inits();
-    [m_assim, m_pred] = Full3DVAR(m0, Kopt, Psi, observed_trajectory, H, dt, drivers);
+    [m_assim, m_pred] = Full3DVAR(m0, Kopt, Psi, observed_trajectory, H, dt, drivers, time);
 
     % compare assim vs TRUE
     errorOnTrajectory(:,:,k) = (m_assim - true_trajectory').^2;
     example_metric(k) = mean(mean((m_assim - true_trajectory').^2));
-    evaluateK(k) = evalK(Kopt, m0, observed_trajectory, dt, Psi, H, drivers);
+    evaluateK(k) = evalK(Kopt, m0, observed_trajectory, dt, Psi, H, drivers, time);
 end
 
 errorOnTrajectoryMean = mean(errorOnTrajectory, 3);

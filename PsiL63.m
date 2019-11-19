@@ -1,4 +1,4 @@
-function v1 = PsiL63(v0, dt, drivers)
+function v1 = PsiL63(v0, t_init, dt, drivers)
 
 tspan = [0, dt];
 params = struct();

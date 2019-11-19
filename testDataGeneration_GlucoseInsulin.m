@@ -29,7 +29,7 @@ K0 = 0.1*randn(sizes(2),sizes(1));
 %for OptObservations the starting point is crucial, better start with known to be good value
 learning_rate = 0.0005;
 m0 = get_glucose_insulin_inits();
-Kopt = GDfullstates(m0, true_trajectory, observed_trajectory, dt, K0, learning_rate, @PsiGlucoseInsulin, H, drivers);
+Kopt = GDfullstates(m0, true_trajectory, observed_trajectory, dt, K0, learning_rate, @PsiGlucoseInsulin, H, drivers, time);
 % Kopt = OptObservations(m0, observed_trajectory, dt, K0, @PsiGlucoseInsulin, H, drivers);
 
 N_tests = 2;

@@ -1,4 +1,4 @@
-function Kopt = GDfullstates(m0, true_traj, obs_traj, dt, K0, learning_rate, Psi, H, drivers)
+function Kopt = GDfullstates(m0, true_traj, obs_traj, dt, K0, learning_rate, Psi, H, drivers, times)
 tic
 N = size(true_traj,2);
 d = length(m0);
@@ -7,7 +7,11 @@ m_pred = zeros(N,d);
 K_list = zeros(N,size(K0,1),size(K0,2));
 L = zeros(N,1);
 
-state_pred_now = Psi(m0, dt, drivers);
+if nargin==9
+    times = zeros(1,N);
+end
+
+state_pred_now = Psi(m0, times(1), dt, drivers);
 K = K0;
 for j=1:N
     m_pred(j,:) = state_pred_now;
@@ -25,7 +29,7 @@ for j=1:N
     m_assim(j,:) = ThreeDvar_step(state_pred_now, meas_now, K, H);
     L(j) = norm(m_assim(j,:) - true_traj(:,j));
 
-    state_pred_now = Psi(m_assim(j,:)', dt, drivers);
+    state_pred_now = Psi(m_assim(j,:)', times(j), dt, drivers);
 end
 
 Kopt = K;
