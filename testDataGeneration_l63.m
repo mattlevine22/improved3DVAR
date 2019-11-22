@@ -101,9 +101,30 @@ end
 %savefig(fig, 'figname.fig');
 
 %validate Kopt on N_tests unseen trajectories
-N_tests = 1;
+N_tests = 100;
 t0_test = t0;
 tf_test = 10;
-tf_future = 10;
-output = validate_new(1,KoptGD, N_tests, @PsiL63, dt, t0_test, tf_test, tf_future, H, noise_params, @get_lorenz_inits, is_driven)
-%validate_new(1,KoptOpt, N_tests, @PsiL63, dt, t0_test, tf_test, tf_future, H, noise_params, @get_lorenz_inits, is_driven)
+tf_future = 20;
+output = validate_new(KoptGD, N_tests, @PsiL63, dt, t0_test, tf_test, tf_future, H, noise_params, @get_lorenz_inits, is_driven);
+
+
+% Make Plots
+figure
+histogram(output.metric1.data);
+title('error in predicting the full state')
+
+figure
+histogram(output.metric2.data);
+title('how fast below measurement noise')
+
+figure
+histogram(output.metric3.data);
+title('asymptotic running average')
+
+figure
+histogram(output.metric4.data);
+title('error in predicting the observed state')
+
+figure
+histogram(output.metric5.data);
+title('how long can we predict in the future')
