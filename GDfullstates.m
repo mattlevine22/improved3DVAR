@@ -30,17 +30,20 @@ end
 
 Kopt = K;
 
-if(0)
-figure;
-subplot(2,1,1)
-plot(L);
-subplot(2,1,2)
+if(1)
+fig = figure;
 leg_names = {};
 for i=1:length(K)
     plot(dt*(1:N),K_list(:,i));hold on;
     leg_names{i} = sprintf('K_%.0f',i);
 end
+title('Convergence of K')
+xlabel('t')
+ylabel('value of K_i')
 legend(leg_names)
+saveas(fig,[pwd '/plots/gradientDescentConvergence.png'])
+savefig(fig,[pwd '/plots/gradientDescentConvergence.fig'])
+
 end
 disp('For Gradient Descent: ')
 toc
