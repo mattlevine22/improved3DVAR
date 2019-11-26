@@ -5,7 +5,11 @@ function [m_assim, m_pred] = Full3DVAR(m0, K, Psi, obs_traj, H, dt, drivers, tim
 	m_assim = zeros(N,d);
 	m_pred = zeros(N,d);
 
-	m_pred(1,:) = Psi(m0, times(1), dt, drivers);
+    if nargin==7
+        times = zeros(1,N);
+    end
+    
+    m_pred(1,:) = Psi(m0, times(1), dt, drivers);
     
 	for j=1:N
 		m_assim(j,:) = ThreeDvar_step(m_pred(j,:)', obs_traj(:,j), K, H);
