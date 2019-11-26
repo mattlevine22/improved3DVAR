@@ -1,6 +1,6 @@
-function v1 = PsiLinear(v0, dt, drivers)
+function v1 = PsiLinear(v0, t_init, dt, drivers)
 
-tspan = [0, dt];
+tspan = [t_init, dt];
 params = struct();
 params.A = [-1.1269  -0.4940 0.1129;
             1.0000  0       0;

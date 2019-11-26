@@ -1,6 +1,6 @@
-function v1 = PsiGlucoseInsulin(v0, dt, drivers)
+function v1 = PsiGlucoseInsulin(v0, t_init, dt, drivers)
 
-tspan = [0, dt];
+tspan = [t_init, t_init + dt];
 
 % set parameters
 [params, adj_vec] = get_sturis_params();

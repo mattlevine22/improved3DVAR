@@ -39,12 +39,14 @@ if is_driven
 end
 
 %fill first value of trajectories
-true_trajectory(:,1) = Psi(v0, dt, drivers) + mvnrnd(muState, Sigma);
+t_init = t0;
+true_trajectory(:,1) = Psi(v0, t_init, dt, drivers) + mvnrnd(muState, Sigma);
 observed_trajectory(:,1) = H*true_trajectory(:,1) + mvnrnd(muObs, Gamma);
 
 %fill whole trajectories
 for i=2:length(time)
-    true_trajectory(:,i) = Psi(true_trajectory(:,i-1), dt, drivers) + mvnrnd(muState, Sigma);
+    t_init = t_init + dt;
+    true_trajectory(:,i) = Psi(true_trajectory(:,i-1), t_init, dt, drivers) + mvnrnd(muState, Sigma);
     observed_trajectory(:,i) = (H*true_trajectory(:,i)) + mvnrnd(muObs, Gamma);
 end
 disp('for data generation: ')
