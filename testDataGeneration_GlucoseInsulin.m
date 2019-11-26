@@ -32,7 +32,10 @@ m0 = get_glucose_insulin_inits();
 Kopt = GDfullstates(m0, true_trajectory, observed_trajectory, dt, K0, learning_rate, @PsiGlucoseInsulin, H, drivers, time);
 % Kopt = OptObservations(m0, observed_trajectory, dt, K0, @PsiGlucoseInsulin, H, drivers);
 
+
+%validate Kopt on N_tests unseen trajectories
 N_tests = 2;
 t0_test = t0;
 tf_test = tf;
-validate(Kopt, N_tests, @PsiGlucoseInsulin, dt, t0_test, tf_test, H, noise_params, @get_glucose_insulin_inits, is_driven)
+tf_future = tf+6*60;
+output = validate_new(Kopt, N_tests, @PsiGlucoseInsulin, dt, t0_test, tf_test, tf_future, H, noise_params, @get_glucose_insulin_inits, is_driven);

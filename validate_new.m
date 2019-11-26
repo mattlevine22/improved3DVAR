@@ -26,7 +26,7 @@ for k=1:N_tests
     truncated_true_trajectory=true_trajectory(:,1:length(time_up_to_now));
     truncated_observed_trajectory=observed_trajectory(:,1:length(time_up_to_now));
     m0 = sample_inits();
-    [m_assim, m_pred] = Full3DVAR(m0, Kopt, Psi, truncated_observed_trajectory, H, dt, drivers);
+    [m_assim, m_pred] = Full3DVAR(m0, Kopt, Psi, truncated_observed_trajectory, H, dt, drivers, time_up_to_now);
     %note that the assim and pred data is up to tf, but not t_future
 
     % compare assim vs TRUE
@@ -68,14 +68,14 @@ for k=1:N_tests
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
 	% mode=4: error in predicting the the observed state
-	evaluateK(k) = evalK(Kopt, m0, truncated_observed_trajectory, dt, Psi, H, drivers);
+	evaluateK(k) = evalK(Kopt, m0, truncated_observed_trajectory, dt, Psi, H, drivers, time_up_to_now);
 	example_metric4(k) =evaluateK(k);
     
         
 	% mode=5: how long can we predict in the future up to a specific error
 	future_pred_threshold=1;%to be defined
     frame_length = ceil(0.2/dt);%THIS IS A USER DEFINED PARAMETER
-	[predicted_future_trajectory, ~, time_future, drivers_future] = generateData(Psi, H, noise_params, dt, tf, t_future,  m_assim(length(time_up_to_now),:), is_driven);
+	[predicted_future_trajectory, ~, time_future, drivers_future] = generateData(Psi, H, noise_params, dt, tf, t_future, m_assim(length(time_up_to_now),:)', is_driven);
        
 	true_future_trajectory=true_trajectory(:,length(time_up_to_now):length(time_whole));
 	future_pointer=1;
@@ -154,7 +154,7 @@ errorOnTrajectoryStd = std(errorOnTrajectory, 0, 3);
 fig = figure;
 n = size(H,2);
 N = size(errorOnTrajectoryMean,1);
-sigma = sqrt(noise_params.obs_noise.covariance);
+sigma = noise_params.obs_noise.covariance;
 
 for i=1:n
     subplot(n,1,i)
@@ -164,7 +164,7 @@ for i=1:n
     %plot(dt*(1:N),max(0,errorOnTrajectoryMean(:,i)-errorOnTrajectoryStd(:,i)));
     legend('variance','mean-squared-error')
     xlabel('t')
-    ylabel('error (log)')
+    ylabel('error')
     set(gca, 'YScale', 'log')
 end
 hold off;
