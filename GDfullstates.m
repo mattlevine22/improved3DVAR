@@ -32,7 +32,7 @@ for j=1:N
     state_pred_now = Psi(m_assim(j,:)', times(j), dt, drivers);
 end
 
-Kopt = K;
+Kopt = mean(K_list)';
 
 if(1)
 fig = figure;

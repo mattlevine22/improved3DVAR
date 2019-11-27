@@ -7,6 +7,8 @@ function  output = validate_new(Kopt, N_tests, Psi, dt, t0, tf,t_future, H, nois
 % mode=5: how long can we predict in the future up to a specific error
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+make_plots = 0;
+
 example_metric1 = zeros(N_tests,1);
 example_metric2 = zeros(N_tests,1);
 example_metric3 = zeros(N_tests,1);
@@ -117,7 +119,7 @@ errorOnTrajectoryStd = std(errorOnTrajectory, 0, 3);
 
 
 
-
+if make_plots
     figure
 
     subplot(3,1,1)
@@ -172,6 +174,7 @@ sgtitle('Mean-Squared-Error - componentwise')
 DateString = datestr(datetime('now'));
 %saveas(fig,[pwd join(['/plots/ErrorTrajectoryL63',DateString,'.png'])])
 %savefig(fig,[pwd join(['/plots/ErrorTrajectoryL63',DateString,'.fig'])])
+end
 
 end
  
